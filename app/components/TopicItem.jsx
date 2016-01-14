@@ -47,7 +47,7 @@ export default class TopicItem extends Component {
 
 TopicItem.propTypes = {
   text: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
   onIncrement: PropTypes.func.isRequired,
   onDecrement: PropTypes.func.isRequired,

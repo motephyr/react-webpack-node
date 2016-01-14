@@ -8,7 +8,7 @@ var Topic = Bookshelf.Model.extend({
   tableName: "topics"
 });
 
-Topics = Bookshelf.Collection.extend({
+var Topics = Bookshelf.Collection.extend({
     model: Topic
 });
 

@@ -2,68 +2,66 @@
  * Defining a User Model in mongoose
  * Code modified from https://github.com/sahat/hackathon-starter
  */
+var Bookshelf = require('./base');
 
 var bcrypt = require('bcrypt-nodejs');
-var mongoose = require('mongoose');
 var crypto = require('crypto');
 
-// Other oauthtypes to be added
-
-/*
- User Schema
- */
-
-var UserSchema = new mongoose.Schema({
-  email: { type: String, unique: true, lowercase: true},
-  password: String,
-  tokens: Array,
-  profile: {
-    name: { type: String, default: ''},
-    gender: { type: String, default: ''},
-    location: { type: String, default: ''},
-    website: { type: String, default: ''},
-    picture: { type: String, default: ''}
+var User = Bookshelf.Model.extend({
+  tableName: "users",
+  initialize: function () {
+    this.on('saving', this.beforeSave);
   },
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
-  google: {}
-});
-
-
-/**
- * Password hash middleware.
- */
-UserSchema.pre('save', function(next) {
-  var user = this;
-  if (!user.isModified('password')) return next();
-  bcrypt.genSalt(5, function(err, salt) {
-    if (err) return next(err);
-    bcrypt.hash(user.password, salt, null, function(err, hash) {
-      if (err) return next(err);
-      user.password = hash;
-      next();
+  beforeSave: function () {
+    return Promise.all([
+      this.buildSalt()
+    ]);
+  },
+  buildSalt: function () {
+    if (this.get('password')) {
+      return this.generatePasswordHash();
+    }
+    return Promise.resolve().bind(this);
+  },
+  //generates a promise which is resolved when the user's salt is generated
+  getSalt: function () {
+    return this.generateSalt().bind(this).then(function (salt) {
+      this.set('salt', this.get('salt') || salt);
+      return this.get('salt');
     });
-  });
-});
-
-/*
- Defining our own custom document instance method
- */
-UserSchema.methods = {
-  comparePassword: function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-      if(err) return cb(err);
+  },
+  //returns a promise for the salt
+  generateSalt: function () {
+    return bcrypt.genSaltAsync(8);
+  },
+  //returns a promise for the password hash
+  generatePasswordHash: function () {
+    return this.getSalt()
+      .bind(this)
+      .then(function (salt) {
+        return bcrypt.hashAsync(this.get('password'), salt, null);
+      })
+      .then(function (hash) {
+        this.set('password_hash', hash);
+        this.unset('password');
+        return this;
+      });
+  },
+  comparePassword: function (candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.password, function (err,
+      isMatch) {
+      if (err) return cb(err);
       cb(null, isMatch);
     })
   }
-};
 
-/**
- * Statics
- */
+});
 
-UserSchema.statics = {}
+var Users = Bookshelf.Collection.extend({
+    model: User
+});
 
-
-
-module.exports = mongoose.model('User', UserSchema);
+module.exports = {
+  User: Bookshelf.model('User', User),
+  Users: Bookshelf.collection('Users', Users)
+}
