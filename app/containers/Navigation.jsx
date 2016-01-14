@@ -4,7 +4,10 @@ import { connect } from 'react-redux';
 import { logOut } from 'actions/users';
 import styles from 'scss/components/_navigation';
 
-class Navigation extends Component {
+@connect(state => ({
+  user: state.user
+}))
+export default class Navigation extends Component {
 
   render() {
     const { dispatch } = this.props;
@@ -24,16 +27,3 @@ class Navigation extends Component {
   }
 
 }
-
-Navigation.propTypes = {
-  user: PropTypes.object,
-  dispatch: PropTypes.func.isRequired
-};
-
-function mapStateToProps(state) {
-  return {
-    user: state.user
-  };
-}
-
-export default connect(mapStateToProps)(Navigation);

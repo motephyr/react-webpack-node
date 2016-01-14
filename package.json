@@ -65,7 +65,7 @@
     "mongoose": "^4.3.4",
     "node-libs-browser": "^0.5.2",
     "node-sass": "^3.4.2",
-    "passport": "^0.2.2",
+    "passport": "^0.3.2",
     "passport-google-oauth": "^0.2.0",
     "passport-local": "^1.0.0",
     "react": "^0.14.3",

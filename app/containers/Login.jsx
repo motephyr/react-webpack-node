@@ -7,18 +7,12 @@ import styles from 'scss/components/_login';
 
 const cx = classNames.bind(styles);
 
-class Login extends Component {
-  /*
-   * This replaces getInitialState. Likewise getDefaultProps and propTypes are just
-   * properties on the constructor
-   * Read more here: https://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html#es6-classes
-   */
-  constructor(props) {
-    super(props);
-    this._onLoginSubmit = this._onLoginSubmit.bind(this);
-  }
+@connect(state => ({
+  user: state.user
+}))
+export default class Login extends Component {
 
-  _onLoginSubmit() {
+  onLoginSubmit() {
     const { dispatch } = this.props;
     const email = ReactDOM.findDOMNode(this.refs.email).value;
     const password = ReactDOM.findDOMNode(this.refs.password).value;
@@ -55,7 +49,7 @@ class Login extends Component {
               ref="password"
               placeholder="password" />
             <button className={cx('login__button', 'login__button--green')}
-              onClick={this._onLoginSubmit}>Login</button>
+              onClick={::this.onLoginSubmit}>Login</button>
             <p className={cx('login__hint')}>Hint: email: example@ninja.com password: ninja</p>
         </fieldset>
         <h1 className={cx('login__header')}>Google Login Demo</h1>
@@ -67,22 +61,3 @@ class Login extends Component {
     );
   }
 }
-
-Login.propTypes = {
-  user: PropTypes.object,
-  dispatch: PropTypes.func
-};
-
-// Function passed in to `connect` to subscribe to Redux store updates.
-// Any time it updates, mapStateToProps is called.
-function mapStateToProps(state) {
-  return {
-    user: state.user
-  };
-}
-
-// Connects React component to the redux store
-// It does not modify the component class passed to it
-// Instead, it returns a new, connected component class, for you to use.
-export default connect(mapStateToProps)(Login);
-
