@@ -1,7 +1,7 @@
 var express = require('express');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-var MongoStore =  require('connect-mongo')(session);
+var PostgreSqlStore = require('connect-pg-simple')(session);
 var path = require('path');
 var secrets = require('./secrets');
 var flash = require('express-flash');
@@ -19,7 +19,9 @@ module.exports = function (app, passport) {
   app.set('view cache', false);
 
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+  app.use(bodyParser.urlencoded({
+    extended: true
+  })); // for parsing application/x-www-form-urlencoded
   app.use(methodOverride());
   app.use(express.static(path.join(__dirname, '../..', 'public')));
 
@@ -62,17 +64,14 @@ module.exports = function (app, passport) {
       httpOnly: true,
       secure: false,
     },
-    store: new MongoStore(
-      { 
-        url: secrets.db,
-        autoReconnect: true
-      }
-    )
+    store: new PostgreSqlStore({
+      conString: secrets.db
+    })
   };
 
   var node_env = process.env.NODE_ENV;
   console.log('Environment: ' + node_env);
-  if(node_env === 'production') {
+  if (node_env === 'production') {
     sess.cookie.secure = true; // Serve secure cookies
   }
 

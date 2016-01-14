@@ -1,6 +1,6 @@
 var express = require('express');
 var fs = require('fs');
-var mongoose = require('mongoose');
+var Db = require("./config/initializers/database.js")
 var passport = require('passport');
 var secrets = require('./config/secrets');
 var webpack = require('webpack');
@@ -8,20 +8,7 @@ var config = require('../webpack/webpack.config.dev.js');
 var app = express();
 var compiler = webpack(config);
 
-// Find the appropriate database to connect to, default to localhost if not found.
-var connect = function() {
-  mongoose.connect(secrets.db, function(err, res) {
-    if(err) {
-      console.log('Error connecting to: ' + secrets.db + '. ' + err);
-    }else {
-      console.log('Succeeded connected to: ' + secrets.db);
-    }
-  });
-};
-connect();
-
-mongoose.connection.on('error', console.log);
-mongoose.connection.on('disconnected', connect);
+Db.initialisation();
 
 // Bootstrap models
 fs.readdirSync(__dirname + '/models').forEach(function(file) {

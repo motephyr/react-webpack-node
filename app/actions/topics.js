@@ -1,7 +1,6 @@
 // Including es6-promise so isomorphic fetch will work
 import { polyfill } from 'es6-promise';
 import fetch from 'isomorphic-fetch';
-import md5 from 'spark-md5';
 import * as types from 'constants';
 
 polyfill();
@@ -63,7 +62,6 @@ export function typing(text) {
 function createTopicRequest(data) {
   return {
     type: types.CREATE_TOPIC_REQUEST,
-    id: data.id,
     count: data.count,
     text: data.text
   };
@@ -78,7 +76,6 @@ function createTopicSuccess() {
 function createTopicFailure(data) {
   return {
     type: types.CREATE_TOPIC_FAILURE,
-    id: data.id,
     ex: data.ex
   };
 }
@@ -98,19 +95,17 @@ export function createTopic(text) {
     // If the text box is empty
     if (text.trim().length <= 0) return;
 
-    const id = md5.hash(text);
     // Redux thunk's middleware receives the store methods `dispatch`
     // and `getState` as parameters
     const { topic } = getState();
     const data = {
-      id,
       count: 1,
       text
     };
 
     // Conditional dispatch
     // If the topic already exists, make sure we emit a dispatch event
-    if (topic.topics.filter(topicItem => topicItem.id === id).length > 0) {
+    if (topic.topics.filter(topicItem => topicItem.text === text).length > 0) {
       // Currently there is no reducer that changes state for this
       // For production you would ideally have a message reducer that
       // notifies the user of a duplicate topic
@@ -133,7 +128,7 @@ export function createTopic(text) {
         }
       })
       .catch(ex => {
-        return dispatch(createTopicFailure({ id, ex: ex.message }));
+        return dispatch(createTopicFailure({ ex: ex.message }));
       });
   };
 }
@@ -181,4 +176,3 @@ export function destroyTopic(id, index) {
     // .then(response => {});
   };
 }
-

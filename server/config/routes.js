@@ -4,9 +4,9 @@
 var topics = require('../controllers/topics');
 var express = require('express');
 var users = require('../controllers/users');
-var mongoose = require('mongoose');
 var _ = require('lodash');
-var Topic = mongoose.model('Topic');
+var Topic = require('../models/topics');
+
 var App = require('../../public/assets/app.server');
 
 module.exports = function(app, passport) {
@@ -19,7 +19,7 @@ module.exports = function(app, passport) {
   // Redirect the user to Google for authentication. When complete, Google
   // will redirect the user back to the application at
   // /auth/google/return
-  // Authentication with google requires an additional scope param, for more info go 
+  // Authentication with google requires an additional scope param, for more info go
   // here https://developers.google.com/identity/protocols/OpenIDConnect#scope-param
   app.get('/auth/google', passport.authenticate('google', { scope: [
         'https://www.googleapis.com/auth/userinfo.profile',

@@ -2,16 +2,17 @@
  * Schema Definitions
  *
  */
-var mongoose = require('mongoose');
+var Bookshelf = require('./base');
 
-var TopicSchema = new mongoose.Schema({
-  id: String,
-  text: String,
-  count: { type: Number, min: 0 },
-  date: { type: Date, default: Date.now }
+var Topic = Bookshelf.Model.extend({
+  tableName: "topics"
 });
 
-// Compiles the schema into a model, opening (or creating, if
-//	nonexistent) the 'Topic' collection in the MongoDB database
-Topic = mongoose.model('Topic', TopicSchema);
+Topics = Bookshelf.Collection.extend({
+    model: Topic
+});
 
+module.exports = {
+  Topic: Bookshelf.model('Topic', Topic),
+  Topics: Bookshelf.collection('Topics', Topics)
+}

@@ -3,7 +3,6 @@
  Code modified from : https://github.com/madhums/node-express-mongoose-demo/blob/master/config/passport/local.js
  */
 
-var mongoose = require('mongoose');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../../models/user');
 
