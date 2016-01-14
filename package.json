@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf public",
     "start": "NODE_ENV=production node server/index.js",
-    "dev": "NODE_ENV=development node server/index.js",
+    "dev": "NODE_ENV=development supervisor server/index.js",
     "build:webpack": "NODE_ENV=production webpack --progress --colors --config ./webpack/webpack.config.prod.js",
     "build": "npm run clean && npm run build:webpack",
     "test": "karma start",
