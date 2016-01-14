@@ -6,6 +6,7 @@ import MainSection from 'components/MainSection';
 import Scoreboard from 'components/Scoreboard';
 import * as topics from 'actions/topics';
 import styles from 'scss/components/_vote';
+import Button from 'react-toolbox/lib/button';
 
 const cx = classNames.bind(styles);
 
@@ -39,6 +40,7 @@ export default class Vote extends Component {
   render() {
     return (
       <div className={cx('vote')}>
+        <Button label="Hello world" raised accent />
         <EntryBox topic={this.props.newTopic}
           onEntryChange={::this.onEntryChange}
           onEntrySave={::this.onEntrySave} />

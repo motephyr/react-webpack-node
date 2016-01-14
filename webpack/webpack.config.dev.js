@@ -61,7 +61,8 @@ module.exports = {
         { test: /\.scss$/,
           loader: 'style!css?module&localIdentName=[local]__[hash:base64:5]' +
             '&sourceMap!autoprefixer-loader!sass?sourceMap&outputStyle=expanded' +
-            '&includePaths[]=' + encodeURIComponent(path.resolve(__dirname, '..', 'app', 'scss'))
+            '&includePaths[]=' + encodeURIComponent(path.resolve(__dirname, '..', 'app', 'scss')) +
+            '!toolbox'
         }
       ])
     },
@@ -70,6 +71,9 @@ module.exports = {
       modulesDirectories: [
         'app', 'node_modules'
       ]
+    },
+    toolbox: {
+      theme: path.join(__dirname, '../app/css/toolbox-theme.scss')
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
