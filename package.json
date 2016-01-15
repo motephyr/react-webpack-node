@@ -39,7 +39,7 @@
     "babel-eslint": "^3.1.14",
     "babel-loader": "^5.4.0",
     "babel-plugin-react-transform": "^1.1.1",
-    "bcrypt-nodejs": "0.0.3",
+    "bcrypt": "^0.8.5",
     "bluebird": "^3.1.1",
     "body-parser": "^1.14.2",
     "bookshelf": "^0.9.1",

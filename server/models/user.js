@@ -4,52 +4,29 @@
  */
 var Bookshelf = require('./base');
 
-var bcrypt = require('bcrypt-nodejs');
+var bcrypt = require('bcrypt');
 var crypto = require('crypto');
 
 var User = Bookshelf.Model.extend({
   tableName: "users",
   initialize: function () {
-    this.on('saving', this.beforeSave);
+    this.on('creating', this.hashPassword, this);
   },
-  beforeSave: function () {
-    return Promise.all([
-      this.buildSalt()
-    ]);
-  },
-  buildSalt: function () {
-    if (this.get('password')) {
-      return this.generatePasswordHash();
-    }
-    return Promise.resolve().bind(this);
-  },
-  //generates a promise which is resolved when the user's salt is generated
-  getSalt: function () {
-    return this.generateSalt().bind(this).then(function (salt) {
-      this.set('salt', this.get('salt') || salt);
-      return this.get('salt');
+  hashPassword: function (model, attrs, options) {
+    return new Promise(function (resolve, reject) {
+      bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(model.attributes.password, salt, function (err, hash) {
+          if (err) reject(err);
+          model.set('password', hash);
+          resolve(hash); // data is created only after this occurs
+        });
+      });
     });
   },
-  //returns a promise for the salt
-  generateSalt: function () {
-    return bcrypt.genSaltAsync(8);
-  },
-  //returns a promise for the password hash
-  generatePasswordHash: function () {
-    return this.getSalt()
-      .bind(this)
-      .then(function (salt) {
-        return bcrypt.hashAsync(this.get('password'), salt, null);
-      })
-      .then(function (hash) {
-        this.set('password_hash', hash);
-        this.unset('password');
-        return this;
-      });
-  },
   comparePassword: function (candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function (err,
+    bcrypt.compare(candidatePassword, this.attributes.password, function (err,
       isMatch) {
+        console.log(isMatch)
       if (err) return cb(err);
       cb(null, isMatch);
     })
@@ -58,7 +35,7 @@ var User = Bookshelf.Model.extend({
 });
 
 var Users = Bookshelf.Collection.extend({
-    model: User
+  model: User
 });
 
 module.exports = {

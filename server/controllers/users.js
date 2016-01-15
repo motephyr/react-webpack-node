@@ -1,5 +1,6 @@
 var _ = require('lodash');
-var User = require('../models/user');
+var Users = require('../models/user').Users;
+
 var passport = require('passport');
 
 /**
@@ -35,22 +36,25 @@ exports.getLogout = function(req, res) {
  * Create a new local account
  */
 exports.postSignUp = function(req, res, next) {
-  var user =  new User({
+  var user = {
     email: req.body.email,
     password: req.body.password
-  });
+  };
 
-  User.findOne({email: req.body.email}, function(err, existingUser) {
+  Users.forge().query({where: {email: req.body.email}}).fetchOne()
+  .then(function(existingUser) {
     if(existingUser) {
       req.flash('errors', { msg: 'Account with that email address already exists' });
     }
-    user.save(function(err) {
-      if(err) return next(err);
+    Users.forge().create(user).then(function(user) {
+
       req.logIn(user, function(err) {
         if(err) return next(err);
         console.log('Successfully created');
         res.end('Success');
       });
+    }).catch(function(err){
+      return next(err);
     });
   });
 };

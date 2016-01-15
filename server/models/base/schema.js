@@ -12,15 +12,15 @@ var Schema = {
 		id: {type: "increments", nullable: false, primary: true},
 		email: { type: "string", unique: true, maxlength: 254},
 		password: {type: "string"},
-		tokens: {type: "json"},
+		tokens: {type: "json", defaultTo: '{}'},
 		name: { type: "string", defaultTo: ''},
 		gender: { type: "string", defaultTo: ''},
 		location: { type: "string", defaultTo: ''},
 		website: { type: "string", defaultTo: ''},
 		picture: { type: "string", defaultTo: ''},
-		resetPasswordToken: {type: "string"},
-		resetPasswordExpires: {type: "dateTime"},
-		google: { type: "integer"}
+		resetPasswordToken: {type: "string", defaultTo: ''},
+		resetPasswordExpires: {type: "dateTime", nullable: true},
+		google: { type: "integer", nullable: true}
 	},
 	topics: {
 		id: {type: "increments", nullable: false, primary: true},

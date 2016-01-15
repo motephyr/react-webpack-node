@@ -4,7 +4,7 @@
  */
 
 var LocalStrategy = require('passport-local').Strategy;
-var User = require('../../models/user');
+var Users = require('../../models/user').Users;
 
 /*
  By default, LocalStrategy expects to find credentials in parameters named username and password.
@@ -13,7 +13,7 @@ var User = require('../../models/user');
 module.exports = new LocalStrategy({
   usernameField : 'email'
 }, function(email, password, done) {
-  User.findOne({ email: email}, function(err, user) {
+  Users.forge().query({where:{email:email}}).fetchOne().then(function(user) {
     if(!user) return done(null, false, { message: 'Email ' + email + ' not found'});
     user.comparePassword(password, function(err, isMatch) {
       if(isMatch) {
